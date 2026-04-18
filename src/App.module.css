@@ -1,0 +1,12 @@
+.app {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "left   grid   right"
+    "bottom bottom bottom";
+  grid-template-columns: var(--sidebar-width) 1fr var(--sidebar-width);
+  grid-template-rows: var(--header-height) 1fr var(--bottom-bar-height);
+  height: 100vh;
+  background: var(--bg-app);
+  overflow: hidden;
+}

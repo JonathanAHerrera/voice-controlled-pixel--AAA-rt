@@ -1,0 +1,60 @@
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+  background: var(--bg-grid);
+  height: 100%;
+}
+
+.gridContainer {
+  display: grid;
+  /* First col is row-label col, rest are data cols */
+  gap: 0;
+}
+
+.colLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-label);
+  height: 24px;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.rowLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-label);
+  width: 24px;
+  user-select: none;
+}
+
+.corner {
+  width: 24px;
+  height: 24px;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background-color: var(--bg-cell-empty);
+  border: 1px solid var(--border-cell);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.cell:hover {
+  border-color: #aaa;
+  transform: scale(1.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  z-index: 1;
+  position: relative;
+}

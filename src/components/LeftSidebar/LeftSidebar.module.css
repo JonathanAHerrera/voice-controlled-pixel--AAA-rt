@@ -1,0 +1,83 @@
+.sidebar {
+  grid-area: left;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-sidebar);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-label);
+}
+
+/* ColorPalette */
+.palette {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.swatch:hover {
+  transform: scale(1.1);
+}
+
+.swatch.active {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 1px #fff inset;
+}
+
+.colorName {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* CommandReference */
+.commandList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.commandChip {
+  font-size: 11px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: #f3f4f6;
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.commandChip span.keyword {
+  color: var(--accent-purple);
+  font-weight: 600;
+}
+
+/* GridInfo */
+.gridInfoText {
+  font-size: 13px;
+  color: var(--text-secondary);
+}

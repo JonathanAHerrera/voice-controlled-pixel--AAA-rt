@@ -1,0 +1,41 @@
+:root {
+  /* Named palette */
+  --color-red: #e74c3c;
+  --color-orange: #e67e22;
+  --color-yellow: #f1c40f;
+  --color-green: #2ecc71;
+  --color-blue: #3498db;
+  --color-darkblue: #2c3e8c;
+  --color-purple: #9b59b6;
+  --color-pink: #e84393;
+  --color-teal: #00cec9;
+  --color-lightgray: #dfe6e9;
+  --color-black: #2d3436;
+  --color-white: #ffffff;
+
+  /* Layout */
+  --sidebar-width: 220px;
+  --header-height: 48px;
+  --bottom-bar-height: 60px;
+  --cell-size: 44px;
+
+  /* UI Colors */
+  --bg-app: #f0f0f0;
+  --bg-sidebar: #ffffff;
+  --bg-grid: #f4f4f4;
+  --bg-cell-empty: #ffffff;
+  --border-cell: #d0d0d0;
+  --border-sidebar: #e0e0e0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-label: #9ca3af;
+  --accent-purple: #7c3aed;
+  --accent-green: #059669;
+  --accent-red: #dc2626;
+  --bg-history-latest: #ede9fe;
+  --bg-voice-feedback: #d1fae5;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+}
