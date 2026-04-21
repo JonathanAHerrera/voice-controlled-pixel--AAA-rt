@@ -1,4 +1,5 @@
 import { parseCoord, formatCoord } from './coordinateUtils.js';
+import { CSS_COLORS } from './cssColors.js';
 
 export const PALETTE = [
   'red', 'orange', 'yellow', 'green', 'blue',
@@ -17,7 +18,13 @@ const COLOR_ALIASES = {
 
 function normalizeColor(raw) {
   const lower = raw.toLowerCase().trim();
-  return COLOR_ALIASES[lower] ?? lower;
+  // Try alias map first, then strip spaces (handles Whisper multi-word: "sky blue" → "skyblue")
+  return COLOR_ALIASES[lower] ?? lower.replace(/\s+/g, '');
+}
+
+function validateColor(color) {
+  if (!CSS_COLORS.has(color)) return `"${color}" is not a recognized CSS color name`;
+  return null;
 }
 
 function normalizeInput(str) {
@@ -60,6 +67,7 @@ const PATTERNS = [
     regex: new RegExp(`^fill\\s+(\\w+(?:\\s+\\w+)?)\\s+${C}\\s+to\\s+${C}$`, 'i'),
     build: (m) => {
       const color = normalizeColor(m[1]);
+      const colorErr = validateColor(color); if (colorErr) return { error: colorErr };
       const from = parseCoord(m[2]);
       const to = parseCoord(m[3]);
       if (!from || !to) return { error: `Invalid coordinates: ${m[2]}, ${m[3]}` };
@@ -109,6 +117,7 @@ const PATTERNS = [
     regex: new RegExp(`^place\\s+(\\w+(?:\\s+\\w+)?)\\s+at\\s+${C}$`, 'i'),
     build: (m) => {
       const color = normalizeColor(m[1]);
+      const colorErr = validateColor(color); if (colorErr) return { error: colorErr };
       const coord = parseCoord(m[2]);
       if (!coord) return { error: `Invalid coordinate: ${m[2]}` };
       return {
@@ -125,11 +134,90 @@ const PATTERNS = [
     regex: /^set\s+color\s+(\w+(?:\s+\w+)?)$/i,
     build: (m) => {
       const color = normalizeColor(m[1]);
+      const colorErr = validateColor(color); if (colorErr) return { error: colorErr };
       return {
         type: 'SET_COLOR',
         color,
         description: `color → ${color}`,
       };
+    },
+  },
+
+  // "select red"
+  {
+    regex: /^select\s+(\w+(?:\s+\w+)?)$/i,
+    build: (m) => {
+      const color = normalizeColor(m[1]);
+      const colorErr = validateColor(color); if (colorErr) return { error: colorErr };
+      return {
+        type: 'SET_COLOR',
+        color,
+        description: `color → ${color}`,
+      };
+    },
+  },
+
+  // "load palette earth" / "load palette gray scale"
+  {
+    regex: /^load\s+palette\s+(\w+(?:\s+\w+)*)$/i,
+    build: (m) => {
+      const name = m[1].toLowerCase().replace(/\s+/g, '');
+      return { type: 'LOAD_PALETTE', name, description: `palette → ${name}` };
+    },
+  },
+
+  // "save palette mypalette"
+  {
+    regex: /^save\s+palette\s+(\w+(?:\s+\w+)*)$/i,
+    build: (m) => {
+      const name = m[1].toLowerCase().replace(/\s+/g, '');
+      return { type: 'SAVE_PALETTE', name, description: `saved palette "${name}"` };
+    },
+  },
+
+  // "new palette mypalette"
+  {
+    regex: /^new\s+palette\s+(\w+(?:\s+\w+)*)$/i,
+    build: (m) => {
+      const name = m[1].toLowerCase().replace(/\s+/g, '');
+      return { type: 'NEW_PALETTE', name, description: `created palette "${name}"` };
+    },
+  },
+
+  // "add red to palette"
+  {
+    regex: /^add\s+(\w+(?:\s+\w+)?)\s+to\s+palette$/i,
+    build: (m) => {
+      const color = normalizeColor(m[1]);
+      const colorErr = validateColor(color); if (colorErr) return { error: colorErr };
+      return {
+        type: 'ADD_COLOR_TO_PALETTE',
+        color,
+        description: `add ${color} to palette`,
+      };
+    },
+  },
+
+  // "remove red from palette"
+  {
+    regex: /^remove\s+(\w+(?:\s+\w+)?)\s+from\s+palette$/i,
+    build: (m) => {
+      const color = normalizeColor(m[1]);
+      const colorErr = validateColor(color); if (colorErr) return { error: colorErr };
+      return {
+        type: 'REMOVE_COLOR_FROM_PALETTE',
+        color,
+        description: `remove ${color} from palette`,
+      };
+    },
+  },
+
+  // "delete palette mypalette" / "delete palette gray scale"
+  {
+    regex: /^delete\s+palette\s+(\w+(?:\s+\w+)*)$/i,
+    build: (m) => {
+      const name = m[1].toLowerCase().replace(/\s+/g, '');
+      return { type: 'DELETE_PALETTE', name, description: `deleted palette "${name}"` };
     },
   },
 

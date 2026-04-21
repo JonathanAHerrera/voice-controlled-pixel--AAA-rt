@@ -131,6 +131,89 @@ export function pixelReducer(state, action) {
       };
     }
 
+    case 'LOAD_PALETTE': {
+      const { name } = action;
+      const colors = state.palettes[name];
+      if (!colors) return { ...state, lastError: `Palette "${name}" not found` };
+      const activeColor = colors.includes(state.activeColor) ? state.activeColor : colors[0];
+      return {
+        ...state,
+        activePalette: name,
+        activeColor,
+        history: addHistory(state, `load palette ${name}`, `palette → ${name}`),
+        lastError: null,
+      };
+    }
+
+    case 'SAVE_PALETTE': {
+      const { name } = action;
+      const colors = [...(state.palettes[state.activePalette] ?? [])];
+      return {
+        ...state,
+        palettes: { ...state.palettes, [name]: colors },
+        activePalette: name,
+        history: addHistory(state, `save palette ${name}`, `saved palette "${name}"`),
+        lastError: null,
+      };
+    }
+
+    case 'NEW_PALETTE': {
+      const { name } = action;
+      return {
+        ...state,
+        palettes: { ...state.palettes, [name]: [state.activeColor] },
+        activePalette: name,
+        history: addHistory(state, `new palette ${name}`, `created palette "${name}"`),
+        lastError: null,
+      };
+    }
+
+    case 'ADD_COLOR_TO_PALETTE': {
+      const { color } = action;
+      const current = state.palettes[state.activePalette] ?? [];
+      if (current.includes(color)) return { ...state, lastError: `${color} is already in this palette` };
+      return {
+        ...state,
+        palettes: { ...state.palettes, [state.activePalette]: [...current, color] },
+        history: addHistory(state, `add ${color} to palette`, `added ${color} to "${state.activePalette}"`),
+        lastError: null,
+      };
+    }
+
+    case 'REMOVE_COLOR_FROM_PALETTE': {
+      const { color } = action;
+      const current = state.palettes[state.activePalette] ?? [];
+      const next = current.filter(c => c !== color);
+      if (next.length === 0) return { ...state, lastError: 'Cannot remove the last color from a palette' };
+      const activeColor = state.activeColor === color ? next[0] : state.activeColor;
+      return {
+        ...state,
+        palettes: { ...state.palettes, [state.activePalette]: next },
+        activeColor,
+        history: addHistory(state, `remove ${color} from palette`, `removed ${color} from "${state.activePalette}"`),
+        lastError: null,
+      };
+    }
+
+    case 'DELETE_PALETTE': {
+      const { name } = action;
+      if (name === 'default') return { ...state, lastError: 'Cannot delete the default palette' };
+      if (!state.palettes[name]) return { ...state, lastError: `Palette "${name}" not found` };
+      const palettes = { ...state.palettes };
+      delete palettes[name];
+      const activePalette = state.activePalette === name ? 'default' : state.activePalette;
+      const colors = palettes[activePalette];
+      const activeColor = colors.includes(state.activeColor) ? state.activeColor : colors[0];
+      return {
+        ...state,
+        palettes,
+        activePalette,
+        activeColor,
+        history: addHistory(state, `delete palette ${name}`, `deleted palette "${name}"`),
+        lastError: null,
+      };
+    }
+
     case 'SET_VOICE_STATUS': {
       return {
         ...state,
